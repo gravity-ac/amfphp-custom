@@ -12,9 +12,9 @@
 /**
  *  includes
  *  */
-require_once dirname(__FILE__) . '/../../../../Amfphp/ClassLoader.php';
+require_once dirname(__FILE__) . '/../../../../amfphp/ClassLoader.php';
 require_once dirname(__FILE__) . '/../../../TestData/AmfTestData.php';
-require_once dirname(__FILE__) . '/../../../../Amfphp/ClassLoader.php';
+require_once dirname(__FILE__) . '/../../../../amfphp/ClassLoader.php';
 require_once dirname(__FILE__) . '/../../../TestData/TestServicesConfig.php';
 
 /**
@@ -22,7 +22,7 @@ require_once dirname(__FILE__) . '/../../../TestData/TestServicesConfig.php';
  * @package Tests_Amfphp_Core_Common
  * @author Ariel Sommeria-klein
  */
-class Amfphp_Core_Common_ServiceRouterTest extends PHPUnit_Framework_TestCase {
+class Amfphp_Core_Common_ServiceRouterTest extends \PHPUnit\Framework\TestCase {
 
     /**
      * object
@@ -34,7 +34,7 @@ class Amfphp_Core_Common_ServiceRouterTest extends PHPUnit_Framework_TestCase {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $testServiceConfig = new TestServicesConfig();
         $this->object = new Amfphp_Core_Common_ServiceRouter($testServiceConfig->serviceFolders, $testServiceConfig->serviceNames2ClassFindInfo);
     }
@@ -77,7 +77,8 @@ class Amfphp_Core_Common_ServiceRouterTest extends PHPUnit_Framework_TestCase {
      * @expectedException Amfphp_Core_Exception
      */
     public function testNoServiceException() {
-        $ret = $this->object->executeServiceCall('NoService', 'noFunction', array());
+        $this->expectException(Amfphp_Core_Exception::class);
+        $this->object->executeServiceCall('NoService', 'noFunction', array());
     }
 
     /**
@@ -85,8 +86,8 @@ class Amfphp_Core_Common_ServiceRouterTest extends PHPUnit_Framework_TestCase {
      * @expectedException Amfphp_Core_Exception
      */
     public function testNoFunctionException() {
-        $ret = $this->object->executeServiceCall('DummyService', 'noFunction', array());
-        $this->assertEquals($ret, null);
+        $this->expectException(Amfphp_Core_Exception::class);
+        $this->object->executeServiceCall('DummyService', 'noFunction', array());
     }
 
     /**
@@ -94,7 +95,18 @@ class Amfphp_Core_Common_ServiceRouterTest extends PHPUnit_Framework_TestCase {
      * @expectedException Amfphp_Core_Exception
      */
     public function testReservedMethodException() {
-        $ret = $this->object->executeServiceCall('DummyService', '_reserved', array());
+        $this->expectException(Amfphp_Core_Exception::class);
+        $this->object->executeServiceCall('DummyService', '_reserved', array());
+    }
+
+    public function testRejectsServicePathTraversal() {
+        $this->expectException(Amfphp_Core_Exception::class);
+        $this->object->executeServiceCall('../TestService', 'returnNull', array());
+    }
+
+    public function testRejectsMagicMethodCalls() {
+        $this->expectException(Amfphp_Core_Exception::class);
+        $this->object->executeServiceCall('TestService', '__construct', array());
     }
 
 }

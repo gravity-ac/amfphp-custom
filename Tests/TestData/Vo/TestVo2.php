@@ -15,6 +15,7 @@
  * @package Tests_TestData_Vos
  * @author Ariel Sommeria-Klein
  */
+#[AllowDynamicProperties]
 class TestVo2 {
     //put your code here
 }

@@ -81,7 +81,7 @@ class AmfphpCharsetConverter {
      * constructor.
      * @param array $config optional key/value pairs in an associative array. Used to override default configuration values.
      */
-    public function  __construct(array $config = null) {
+    public function  __construct(?array $config = null) {
         //defaults
         $this->clientCharset = 'utf-8';
         $this->phpCharset = 'utf-8';
@@ -169,11 +169,17 @@ class AmfphpCharsetConverter {
             case self::METHOD_ICONV:
                 return iconv($fromCharset, $toCharset, $string);
             case self::METHOD_UTF8_DECODE:
-                return ($direction == self::DIRECTION_CLIENT_TO_PHP ? utf8_decode($string) : utf8_encode($string));
+                return $direction == self::DIRECTION_CLIENT_TO_PHP
+                    ? mb_convert_encoding($string, 'ISO-8859-1', 'UTF-8')
+                    : mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
             case self::METHOD_MBSTRING:
                 return mb_convert_encoding($string, $fromCharset, $toCharset);
             case self::METHOD_RECODE:
-                return recode_string($fromCharset . '..' . $toCharset, $string);
+                if (!function_exists('recode_string')) {
+                    throw new RuntimeException('The recode extension is required for METHOD_RECODE');
+                }
+                $recodeString = 'recode_string';
+                return $recodeString($fromCharset . '..' . $toCharset, $string);
             default:
                 return $string;
         }

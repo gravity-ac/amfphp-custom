@@ -47,7 +47,7 @@ class AmfphpJson implements Amfphp_Core_Common_IDeserializer, Amfphp_Core_Common
      * constructor. Add filters on the HookManager.
      * @param array $config optional key/value pairs in an associative array. Used to override default configuration values.
      */
-    public function __construct(array $config = null) {
+    public function __construct(?array $config = null) {
         $filterManager = Amfphp_Core_FilterManager::getInstance();
         $filterManager->addFilter(Amfphp_Core_Gateway::FILTER_DESERIALIZER, $this, 'filterHandler');
         $filterManager->addFilter(Amfphp_Core_Gateway::FILTER_DESERIALIZED_REQUEST_HANDLER, $this, 'filterHandler');
@@ -60,7 +60,7 @@ class AmfphpJson implements Amfphp_Core_Common_IDeserializer, Amfphp_Core_Common
      * If the content type contains the 'json' string, returns this plugin
      * @param mixed null at call in gateway.
      * @param String $contentType
-     * @return this or null
+     * @return self|null
      */
     public function filterHandler($handler, $contentType) {
         if (strpos($contentType, self::JSON_CONTENT_TYPE) !== false) {

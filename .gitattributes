@@ -1,0 +1,12 @@
+/BackOffice export-ignore
+/Examples export-ignore
+/Tests export-ignore
+/doc export-ignore
+/index-files export-ignore
+/amfphp/Services/ExampleService.php export-ignore
+/amfphp/Plugins/AmfphpMonitor/log.txt.php export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/phpstan.neon export-ignore
+/phpunit.xml export-ignore
+/scripts export-ignore

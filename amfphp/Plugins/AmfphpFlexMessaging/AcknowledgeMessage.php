@@ -17,6 +17,8 @@
  * @author Ariel Sommeria-Klein
  */
 class AmfphpFlexMessaging_AcknowledgeMessage {
+    public $_explicitType;
+
     /**
      * correlation id. guid
      * @see generateRandomId

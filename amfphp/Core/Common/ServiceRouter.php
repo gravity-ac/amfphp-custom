@@ -71,6 +71,14 @@ class Amfphp_Core_Common_ServiceRouter {
      * @return Object service object
      */
     public static function getServiceObjectStatically($serviceName, array $serviceFolders, array $serviceNames2ClassFindInfo){
+        if (!is_string($serviceName)
+            || $serviceName === ''
+            || str_contains($serviceName, "\0")
+            || str_contains($serviceName, '..')
+            || str_contains($serviceName, '\\')
+            || str_starts_with($serviceName, '/')) {
+            throw new Amfphp_Core_Exception('Invalid service name');
+        }
         $serviceObject = null;
         if (isset($serviceNames2ClassFindInfo[$serviceName])) {
             $classFindInfo = $serviceNames2ClassFindInfo[$serviceName];
@@ -137,25 +145,26 @@ class Amfphp_Core_Common_ServiceRouter {
      *
      */
     public function executeServiceCall($serviceName, $methodName, array $parameters) {
+        if (!is_string($methodName)
+            || !preg_match('/^[A-Za-z][A-Za-z0-9_]*$/D', $methodName)) {
+            throw new Amfphp_Core_Exception('Invalid or inaccessible service method');
+        }
         $unfilteredServiceObject = $this->getServiceObject($serviceName);
         $serviceObject = Amfphp_Core_FilterManager::getInstance()->callFilters(self::FILTER_SERVICE_OBJECT, $unfilteredServiceObject, $serviceName, $methodName, $parameters);
 
         $isStaticMethod = false;
         
-        if(method_exists($serviceObject, $methodName)){
-            //method exists, but isn't static
-        }else if (method_exists($serviceName, $methodName)) {
-            $isStaticMethod = true;
-        }else{
+        if (!method_exists($serviceObject, $methodName)) {
             throw new Amfphp_Core_Exception("method $methodName not found on $serviceName object ");
         }
-        
-        if(substr($methodName, 0, 1) == '_'){
-            throw new Amfphp_Core_Exception("The method $methodName starts with a '_', and is therefore not accessible");
+
+        $method = new ReflectionMethod($serviceObject, $methodName);
+        if (!$method->isPublic()) {
+            throw new Amfphp_Core_Exception("method $methodName is not public on $serviceName object");
         }
-        
+        $isStaticMethod = $method->isStatic();
+
         if($this->checkArgumentCount){
-            $method = new ReflectionMethod($serviceObject, $methodName);
             $numberOfRequiredParameters = $method->getNumberOfRequiredParameters();
             $numberOfParameters = $method->getNumberOfParameters();
             $numberOfProvidedParameters = count($parameters);
@@ -164,9 +173,9 @@ class Amfphp_Core_Common_ServiceRouter {
             }      
         }
         if($isStaticMethod){
-            return call_user_func_array(array($serviceName, $methodName), $parameters);
+            return $method->invokeArgs(null, $parameters);
         }else{
-            return call_user_func_array(array($serviceObject, $methodName), $parameters);
+            return $method->invokeArgs($serviceObject, $parameters);
         }
     }
 

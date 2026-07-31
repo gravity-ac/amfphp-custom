@@ -26,7 +26,7 @@ class AmfphpDummy implements Amfphp_Core_Common_IDeserializer, Amfphp_Core_Commo
      * constructor.
      * @param array $config optional key/value pairs in an associative array. Used to override default configuration values.
      */
-    public function __construct(array $config = null) {
+    public function __construct(?array $config = null) {
         $filterManager = Amfphp_Core_FilterManager::getInstance();
         $filterManager->addFilter(Amfphp_Core_Gateway::FILTER_DESERIALIZER, $this, "filterHandler");
         $filterManager->addFilter(Amfphp_Core_Gateway::FILTER_DESERIALIZED_REQUEST_HANDLER, $this, "filterHandler");
@@ -39,7 +39,7 @@ class AmfphpDummy implements Amfphp_Core_Common_IDeserializer, Amfphp_Core_Commo
      * if no content type, then returns this.
      * @param mixed null at call in gateway.
      * @param String $contentType
-     * @return this or null
+     * @return self|null
      */
     public function filterHandler($handler, $contentType) {
         if (!$contentType || $contentType == self::CONTENT_TYPE) {
@@ -95,7 +95,7 @@ class AmfphpDummy implements Amfphp_Core_Common_IDeserializer, Amfphp_Core_Commo
      * filter the headers to make sure the content type is set to text/html if the request was handled by the service browser
      * @param array $headers
      * @param string $contentType
-     * @return array
+     * @return array|null
      */
     public function filterHeaders($headers, $contentType) {
         if (!$contentType || $contentType == self::CONTENT_TYPE) {

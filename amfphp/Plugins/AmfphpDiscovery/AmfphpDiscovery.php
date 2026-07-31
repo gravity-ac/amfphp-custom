@@ -45,7 +45,7 @@ class AmfphpDiscovery {
      * adds filters to grab config about services and add discovery service. Low priority so that other plugins can add their services first
      * @param array $config optional key/value pairs in an associative array. Used to override default configuration values.
      */
-    public function  __construct(array $config = null) {
+    public function  __construct(?array $config = null) {
         $filterManager = Amfphp_Core_FilterManager::getInstance();
         $filterManager->addFilter(Amfphp_Core_Gateway::FILTER_SERVICE_NAMES_2_CLASS_FIND_INFO, $this, 'filterServiceNames2ClassFindInfo', 99);
         $filterManager->addFilter(Amfphp_Core_Gateway::FILTER_SERVICE_FOLDER_PATHS, $this, 'filterServiceFolderPaths', 99);

@@ -15,6 +15,7 @@
  * @package Amfphp_Core_Amf
  * @author Ariel Sommeria-klein
  */
+#[AllowDynamicProperties]
 class Amfphp_Core_Amf_Message {
 
     /**

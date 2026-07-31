@@ -12,7 +12,7 @@
 /**
 *  includes
 *  */
-require_once dirname(__FILE__) . '/../../../Amfphp/ClassLoader.php';
+require_once dirname(__FILE__) . '/../../../amfphp/ClassLoader.php';
 require_once dirname(__FILE__) . '/../../TestData/TestPlugins/DisabledPlugin/DisabledPlugin.php';
 
 /**
@@ -20,7 +20,7 @@ require_once dirname(__FILE__) . '/../../TestData/TestPlugins/DisabledPlugin/Dis
  * @package Tests_Amfphp_Core
  * @author Ariel Sommeria-klein
  */
-class Amfphp_Core_PluginManagerTest extends PHPUnit_Framework_TestCase {
+class Amfphp_Core_PluginManagerTest extends \PHPUnit\Framework\TestCase {
     
     /**
      * plugin manager
@@ -33,7 +33,7 @@ class Amfphp_Core_PluginManagerTest extends PHPUnit_Framework_TestCase {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->pluginManager = Amfphp_Core_PluginManager::getInstance();
     }
 
@@ -74,6 +74,7 @@ class Amfphp_Core_PluginManagerTest extends PHPUnit_Framework_TestCase {
      * @expectedException Amfphp_Core_Exception
      */
     public function testBadFolder(){
+        $this->expectException(Amfphp_Core_Exception::class);
         $this->pluginManager->loadPlugins(array('bla'));
 
     }

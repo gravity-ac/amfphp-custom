@@ -313,7 +313,7 @@ class Amfphp_Core_Amf_Serializer implements Amfphp_Core_Common_ISerializer {
 
         $numeric = array(); // holder to store the numeric keys
         $string = array(); // holder to store the string keys
-        $len = count($d); // get the total number of entries for the array
+        $len = is_array($d) ? count($d) : count(get_object_vars($d));
         $largestKey = -1;
         foreach ($d as $key => $data) { // loop over each element
             if (is_int($key) && ($key >= 0)) { // make sure the keys are numeric
@@ -541,7 +541,7 @@ class Amfphp_Core_Amf_Serializer implements Amfphp_Core_Common_ISerializer {
     /**
      * Write undefined (Amf3).
      *
-     * @return nothing
+     * @return void
      */
     protected function writeAmf3Undefined() {
         $this->outBuffer .= "\0";
@@ -550,7 +550,7 @@ class Amfphp_Core_Amf_Serializer implements Amfphp_Core_Common_ISerializer {
     /**
      * Write NULL (Amf3).
      *
-     * @return nothing
+     * @return void
      */
     protected function writeAmf3Null() {
         $this->outBuffer .= "\1";
@@ -561,7 +561,7 @@ class Amfphp_Core_Amf_Serializer implements Amfphp_Core_Common_ISerializer {
      *
      * @param bool $d the boolean to serialise
      *
-     * @return nothing
+     * @return void
      */
     protected function writeAmf3Bool($d) {
         $this->outBuffer .= $d ? "\3" : "\2";
@@ -574,7 +574,7 @@ class Amfphp_Core_Amf_Serializer implements Amfphp_Core_Common_ISerializer {
      *
      * @param int $d the integer to serialise
      *
-     * @return nothing
+     * @return void
      */
     protected function writeAmf3Int($d) {
         $this->outBuffer .= $this->getAmf3Int($d);
@@ -591,8 +591,7 @@ class Amfphp_Core_Amf_Serializer implements Amfphp_Core_Common_ISerializer {
      *
      * @param string $d the string to send
      *
-     * @return The reference index inside the lookup table is returned. In case of an empty
-     * string which is sent in a special way, NULL is returned.
+     * @return void
      */
     protected function writeAmf3String($d) {
 
@@ -945,19 +944,26 @@ class Amfphp_Core_Amf_Serializer implements Amfphp_Core_Common_ISerializer {
                 $function = "writeAmf3TypedObject";
             }
         } else {
+            $className = '';
             if ($d->type == Amfphp_Core_Amf_Types_Vector::VECTOR_INT) {
                 $className = "i";
             } elseif ($d->type == Amfphp_Core_Amf_Types_Vector::VECTOR_UINT) {
                 $className = "I";
             } elseif ($d->type == Amfphp_Core_Amf_Types_Vector::VECTOR_DOUBLE) {
                 $className = "d";
+            } else {
+                throw new InvalidArgumentException('Unsupported AMF3 vector type');
             }
             $function = "writeAmf3VectorValue";
         }
 
 
         for ($i = 0; $i < $num_count; $i++) {
-            $this->$function($d->data[$i], $className);
+            if ($function === 'writeAmf3VectorValue') {
+                $this->writeAmf3VectorValue($d->data[$i], $className);
+            } else {
+                $this->$function($d->data[$i]);
+            }
         }
 
     }

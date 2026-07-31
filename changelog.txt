@@ -1,4 +1,12 @@
 Version history
+--------- 3.0.0 ---------
+Require PHP 8.4 and modernize the suite for PHPUnit 12
+Add PHPStan, PHPCompatibility, Composer audit, and PHP 8.4/8.5 CI
+Harden service dispatch, monitor deserialization, and malformed packet handling
+Add configurable request-size and AMF version-3 envelope policies
+Use secure plugin defaults while retaining optional plugins for explicit opt-in
+Prepare clean Composer distribution metadata and documentation
+
 --------- 2.2.2 ---------
 support for php 5.6 and preliminary support for php 7
 better detection of service classes in Amfphp discorvery(for service browser)

@@ -59,6 +59,12 @@ class Amfphp_Core_Amf_Handler implements Amfphp_Core_Common_IDeserializer, Amfph
      */
     protected $returnErrorDetails = true;
 
+    /** @var int */
+    protected $maxRequestBytes = 8388608;
+
+    /** @var bool */
+    protected $requireAmf3Envelope = false;
+
     /**
      * Vo Converter. 
      * @var Amfphp_Core_Common_IVoConverter 
@@ -85,6 +91,12 @@ class Amfphp_Core_Amf_Handler implements Amfphp_Core_Common_IDeserializer, Amfph
         if (isset($sharedConfig[Amfphp_Core_Config::CONFIG_RETURN_ERROR_DETAILS])) {
             $this->returnErrorDetails = $sharedConfig[Amfphp_Core_Config::CONFIG_RETURN_ERROR_DETAILS];
         }
+        if (isset($sharedConfig[Amfphp_Core_Config::CONFIG_MAX_REQUEST_BYTES])) {
+            $this->maxRequestBytes = max(1, (int) $sharedConfig[Amfphp_Core_Config::CONFIG_MAX_REQUEST_BYTES]);
+        }
+        if (isset($sharedConfig[Amfphp_Core_Config::CONFIG_REQUIRE_AMF3_ENVELOPE])) {
+            $this->requireAmf3Envelope = (bool) $sharedConfig[Amfphp_Core_Config::CONFIG_REQUIRE_AMF3_ENVELOPE];
+        }
     }
 
     /**
@@ -96,6 +108,9 @@ class Amfphp_Core_Amf_Handler implements Amfphp_Core_Common_IDeserializer, Amfph
      * @return string
      */
     public function deserialize(array $getData, array $postData, $rawPostData) {
+        if (!is_string($rawPostData) || strlen($rawPostData) > $this->maxRequestBytes) {
+            throw new Amfphp_Core_Exception('AMF request exceeds the configured size limit');
+        }
         $deserializer = new Amfphp_Core_Amf_Deserializer();
         //note: this has to be done here and not in the constructor to avoid 
         //disabling scanning when it's another handler that ends up handling the request
@@ -105,6 +120,10 @@ class Amfphp_Core_Amf_Handler implements Amfphp_Core_Common_IDeserializer, Amfph
             $deserializer->voConverter = $this->voConverter;
         }
         $requestPacket = $deserializer->deserialize($getData, $postData, $rawPostData);
+        if ($this->requireAmf3Envelope
+            && $requestPacket->amfVersion !== Amfphp_Core_Amf_Constants::AMF3_ENCODING) {
+            throw new Amfphp_Core_Exception('AMF version 3 envelope required');
+        }
         return $requestPacket;
     }
 

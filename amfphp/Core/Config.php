@@ -75,6 +75,12 @@ class Amfphp_Core_Config {
 
     const CONFIG_RETURN_ERROR_DETAILS = 'returnErrorDetails';
 
+    /** Maximum accepted request body size in bytes. */
+    const CONFIG_MAX_REQUEST_BYTES = 'maxRequestBytes';
+
+    /** Reject AMF envelopes older than version 3 when enabled. */
+    const CONFIG_REQUIRE_AMF3_ENVELOPE = 'requireAmf3Envelope';
+
     /**
      * array of plugins that are available but should be disabled
      * @var array
@@ -91,20 +97,20 @@ class Amfphp_Core_Config {
         $this->pluginsFolders = array(AMFPHP_ROOTPATH . 'Plugins/');
         $this->pluginsConfig = array();
         $this->sharedConfig = array();
+        $this->sharedConfig[self::CONFIG_MAX_REQUEST_BYTES] = 8 * 1024 * 1024;
+        $this->sharedConfig[self::CONFIG_REQUIRE_AMF3_ENVELOPE] = false;
         $this->disabledPlugins = array();
         
-        //logging enabled
-        //$this->disabledPlugins[] = 'AmfphpLogger';
-        //$this->disabledPlugins[] = 'AmfphpErrorHandler';
- 
-        //AmfphpDummy serves the default gateway page
-        //$this->disabledPlugins[] = 'AmfphpDummy';
-       
-        //disabled plugins
+        // Secure defaults: the core AMF gateway needs no optional plugins.
+        // ErrorHandler remains enabled so exceptions are returned as AMF faults.
         $this->disabledPlugins[] = 'AmfphpAuthentication';
+        $this->disabledPlugins[] = 'AmfphpCharsetConverter';
         $this->disabledPlugins[] = 'AmfphpDiscovery';
+        $this->disabledPlugins[] = 'AmfphpDummy';
         $this->disabledPlugins[] = 'AmfphpFlexMessaging';
+        $this->disabledPlugins[] = 'AmfphpGet';
         $this->disabledPlugins[] = 'AmfphpJson';
+        $this->disabledPlugins[] = 'AmfphpLogger';
         $this->disabledPlugins[] = 'AmfphpMonitor';
         $this->disabledPlugins[] = 'AmfphpVoConverter';
         

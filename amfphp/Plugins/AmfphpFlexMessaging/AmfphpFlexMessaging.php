@@ -66,7 +66,7 @@ class AmfphpFlexMessaging {
      * constructor.
      * @param array $config optional key/value pairs in an associative array. Used to override default configuration values.
      */
-    public function __construct(array $config = null) {
+    public function __construct(?array $config = null) {
         Amfphp_Core_FilterManager::getInstance()->addFilter(Amfphp_Core_Amf_Handler::FILTER_AMF_REQUEST_MESSAGE_HANDLER, $this, 'filterAmfRequestMessageHandler');
         Amfphp_Core_FilterManager::getInstance()->addFilter(Amfphp_Core_Amf_Handler::FILTER_AMF_EXCEPTION_HANDLER, $this, 'filterAmfExceptionHandler');
         $this->clientUsesFlexMessaging = false;
@@ -78,7 +78,7 @@ class AmfphpFlexMessaging {
      * @param Object $handler null at call. If the plugin takes over the handling of the request message,
      * it must set this to a proper handler for the message, probably itself.
      * @param Amfphp_Core_Amf_Message $requestMessage the request message
-     * @return array
+     * @return self|null
      */
     public function filterAmfRequestMessageHandler($handler, Amfphp_Core_Amf_Message $requestMessage) {
         if ($requestMessage->targetUri == 'null') {
@@ -94,7 +94,7 @@ class AmfphpFlexMessaging {
      * filter amf exception handler
      * @param Object $handler null at call. If the plugin takes over the handling of the request message,
      * it must set this to a proper handler for the message, probably itself.
-     * @return array
+     * @return self|null
      */
     public function filterAmfExceptionHandler($handler) {
         if ($this->clientUsesFlexMessaging) {

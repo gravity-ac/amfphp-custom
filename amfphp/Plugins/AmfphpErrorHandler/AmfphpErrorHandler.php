@@ -22,7 +22,7 @@ class AmfphpErrorHandler {
      * constructor. Add filters on the HookManager.
      * @param array $config optional key/value pairs in an associative array. Used to override default configuration values.
      */
-    public function  __construct(array $config = null) {
+    public function  __construct(?array $config = null) {
         set_error_handler('custom_warning_handler');
     }
 }

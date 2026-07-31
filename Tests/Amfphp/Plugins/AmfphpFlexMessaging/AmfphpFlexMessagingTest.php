@@ -12,8 +12,8 @@
 /**
  *  includes
  *  */
-require_once dirname(__FILE__) . '/../../../../Amfphp/Plugins/AmfphpFlexMessaging/AmfphpFlexMessaging.php';
-require_once dirname(__FILE__) . '/../../../../Amfphp/ClassLoader.php';
+require_once dirname(__FILE__) . '/../../../../amfphp/Plugins/AmfphpFlexMessaging/AmfphpFlexMessaging.php';
+require_once dirname(__FILE__) . '/../../../../amfphp/ClassLoader.php';
 require_once dirname(__FILE__) . '/../../../TestData/TestServicesConfig.php';
 
 /**
@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/../../../TestData/TestServicesConfig.php';
  * @package Tests_Amfphp_Plugins_FlexMessaging
  * @author Ariel Sommeria-klein
  */
-class AmfphpFlexMessagingTest extends PHPUnit_Framework_TestCase {
+class AmfphpFlexMessagingTest extends \PHPUnit\Framework\TestCase {
 
     /**
      * object
@@ -39,7 +39,7 @@ class AmfphpFlexMessagingTest extends PHPUnit_Framework_TestCase {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->object = new AmfphpFlexMessaging();
         $testServiceConfig = new TestServicesConfig();
         $this->serviceRouter = new Amfphp_Core_Common_ServiceRouter($testServiceConfig->serviceFolders, $testServiceConfig->serviceNames2ClassFindInfo);
@@ -49,7 +49,7 @@ class AmfphpFlexMessagingTest extends PHPUnit_Framework_TestCase {
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown() {
+    protected function tearDown(): void {
         
     }
 

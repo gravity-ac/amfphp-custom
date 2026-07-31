@@ -36,7 +36,7 @@ class Amfphp_Core_HttpRequestGatewayFactory {
      * @param Amfphp_Core_Config $config optional. If null, the gateway will use the default
      * @return Amfphp_Core_Gateway
      */
-    static public function createGateway(Amfphp_Core_Config $config = null){
+    static public function createGateway(?Amfphp_Core_Config $config = null){
         $contentType = null;
         if(isset ($_GET['contentType'])){
             $contentType = $_GET['contentType'];

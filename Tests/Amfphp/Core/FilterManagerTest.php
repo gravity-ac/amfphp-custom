@@ -12,14 +12,14 @@
 /**
  *  includes
  *  */
-require_once dirname(__FILE__) . '/../../../Amfphp/ClassLoader.php';
+require_once dirname(__FILE__) . '/../../../amfphp/ClassLoader.php';
 
 /**
  * Test class for Amfphp_Core_FilterManager.
  * @package Tests_Amfphp_Core
  * @author Ariel Sommeria-klein
  */
-class Amfphp_Core_FilterManagerTest extends PHPUnit_Framework_TestCase {
+class Amfphp_Core_FilterManagerTest extends \PHPUnit\Framework\TestCase {
 
     /**
      * test filter

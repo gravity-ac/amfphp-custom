@@ -24,7 +24,7 @@ file_put_contents('request.amf', getRawPostData());
  * a gateway php script like the normal gateway except that it uses test services 
  * @author Ariel Sommeria-klein
  */
-require_once dirname(__FILE__) . '/../../Amfphp/ClassLoader.php';
+require_once dirname(__FILE__) . '/../../amfphp/ClassLoader.php';
 require_once dirname(__FILE__) . '/TestServicesConfig.php';
 $config = new TestServicesConfig();
 //remove last line in plugin folders that adds baguette amf

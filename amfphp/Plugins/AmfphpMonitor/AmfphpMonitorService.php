@@ -41,7 +41,7 @@ class AmfphpMonitorService {
     /**
      * get method roles
      * @param string $methodName
-     * @return array
+     * @return array|null
      */
     public function _getMethodRoles($methodName) {
         if (self::$restrictAccess) {
@@ -83,8 +83,8 @@ class AmfphpMonitorService {
         //use associative array to avoid duplicating time  names, then return keys.
         $timeNamesAssoc = array();
         foreach($exploded as $serializedRecord){
-            $record = unserialize($serializedRecord); 
-            if(!$record){
+            $record = @unserialize($serializedRecord, array('allowed_classes' => array('stdClass')));
+            if(!$record || !is_object($record) || !isset($record->uri, $record->times) || !is_array($record->times)){
                 continue;
             }
             $uri = $record->uri;

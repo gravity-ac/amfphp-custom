@@ -61,7 +61,7 @@ class Amfphp_Core_PluginManager {
      * Otherwise use whatever is not null
      * @param array $disabledPlugins  optional.  an array of names of plugins to disable
      */
-    public function loadPlugins($pluginFolders, array $pluginsConfig = null, array $sharedConfig = null, array $disabledPlugins = null) {
+    public function loadPlugins($pluginFolders, ?array $pluginsConfig = null, ?array $sharedConfig = null, ?array $disabledPlugins = null) {
         foreach ($pluginFolders as $pluginsFolderRootPath) {
             if (!is_dir($pluginsFolderRootPath)) {
                 throw new Amfphp_Core_Exception('invalid path for loading plugins at ' . $pluginsFolderRootPath);

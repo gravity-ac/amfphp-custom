@@ -1,12 +1,43 @@
 {
     "name": "gravity-ac/amfphp-custom",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/gravity-ac/amfphp-custom"
-        }
-    ],
+    "description": "Maintained AMF0/AMF3 remoting library for PHP 8.4 and later",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "keywords": ["amf", "amf3", "remoting"],
+    "homepage": "https://github.com/gravity-ac/amfphp-custom",
+    "require": {
+        "php": "^8.4"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+        "phpcompatibility/php-compatibility": "^10.0@dev",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^12.5"
+    },
     "autoload": {
-    "files": ["amfphp/ClassLoader.php"]
+        "files": ["amfphp/ClassLoader.php"]
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "lint": "php scripts/lint.php",
+        "test": "phpunit --configuration phpunit.xml",
+        "analyse": "phpstan analyse --configuration phpstan.neon --no-progress",
+        "compat": "phpcs -p amfphp --standard=PHPCompatibility --runtime-set testVersion 8.4",
+        "check": [
+            "@lint",
+            "@test",
+            "@analyse",
+            "@compat"
+        ]
+    },
+    "support": {
+        "issues": "https://github.com/gravity-ac/amfphp-custom/issues",
+        "source": "https://github.com/gravity-ac/amfphp-custom"
     }
 }

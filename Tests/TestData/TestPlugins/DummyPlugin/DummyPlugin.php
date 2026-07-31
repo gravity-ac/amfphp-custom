@@ -34,7 +34,7 @@ class DummyPlugin {
      * constructor
      * @param array $pluginConfig
      */
-    public function __construct(array $pluginConfig = null) {
+    public function __construct(?array $pluginConfig = null) {
         self::$instanciationCounter++;
         if ($pluginConfig) {
             if (isset($pluginConfig['dummyConfVar'])) {

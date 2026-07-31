@@ -12,7 +12,7 @@
 /**
  *  includes
  *  */
-require_once dirname(__FILE__) . '/../../../../Amfphp/ClassLoader.php';
+require_once dirname(__FILE__) . '/../../../../amfphp/ClassLoader.php';
 require_once dirname(__FILE__) . '/../../../TestData/AmfTestData.php';
 require_once dirname(__FILE__) . '/AmfSerializerWrapper.php';
 
@@ -23,7 +23,7 @@ require_once dirname(__FILE__) . '/AmfSerializerWrapper.php';
  * @package Tests_Amfphp_Core_Amf
  * @author Ariel Sommeria-klein
  */
-class SerializationTest extends PHPUnit_Framework_TestCase {
+class SerializationTest extends \PHPUnit\Framework\TestCase {
 
     /**
      * test basic methods

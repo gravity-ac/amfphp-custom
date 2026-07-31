@@ -85,7 +85,7 @@ class AmfphpMonitor {
      * manages log path. If file exists at log path, adds hooks for logging.
      * @param array $config 
      */
-    public function __construct(array $config = null) {
+    public function __construct(?array $config = null) {
         self::$lastMeasuredTime = round(microtime(true) * 1000);
         self::$times = array();
         $filterManager = Amfphp_Core_FilterManager::getInstance();
@@ -206,7 +206,7 @@ class AmfphpMonitor {
      * @param mixed $rawData
      */
     public function filterSerializedResponse($rawData) {
-        if(substr($this->uri, 0, 6) == 'Amfphp'){
+        if(substr((string) $this->uri, 0, 6) == 'Amfphp'){
             return;
         }
         

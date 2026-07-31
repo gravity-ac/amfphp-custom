@@ -45,7 +45,7 @@ class AmfphpDiscoveryService {
     /**
      * get method roles
      * @param string $methodName
-     * @return array
+     * @return array|null
      */
     public function _getMethodRoles($methodName) {
         if (self::$restrictAccess) {

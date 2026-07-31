@@ -12,15 +12,15 @@
 /**
 *  includes
 *  */
-require_once dirname(__FILE__) . '/../../../../Amfphp/Plugins/AmfphpErrorHandler/AmfphpErrorHandler.php';
-require_once dirname(__FILE__) . '/../../../../Amfphp/ClassLoader.php';
+require_once dirname(__FILE__) . '/../../../../amfphp/Plugins/AmfphpErrorHandler/AmfphpErrorHandler.php';
+require_once dirname(__FILE__) . '/../../../../amfphp/ClassLoader.php';
 
 /**
  * Test class for AmfphpErrorHandler.
  * @package Tests_Amfphp_Plugins_ErrorHandler
  * @author Ariel Sommeria-klein
  */
-class AmfphpErrorHandlerTest extends PHPUnit_Framework_TestCase {
+class AmfphpErrorHandlerTest extends \PHPUnit\Framework\TestCase {
 
     /**
      * object
@@ -33,13 +33,14 @@ class AmfphpErrorHandlerTest extends PHPUnit_Framework_TestCase {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         error_reporting(E_ALL ^ E_USER_NOTICE );
         $this->object = new AmfphpErrorHandler();
         
     }
     
-    protected function tearDown(){
+    protected function tearDown(): void {
+        restore_error_handler();
         error_reporting(E_ALL);
         
     }
@@ -50,7 +51,8 @@ class AmfphpErrorHandlerTest extends PHPUnit_Framework_TestCase {
      * @expectedException Amfphp_Core_Exception
      * */
     public function testThrows(){
-        trigger_error("oops", E_USER_ERROR);
+        $this->expectException(Amfphp_Core_Exception::class);
+        trigger_error("oops", E_USER_WARNING);
     }
 
     /**

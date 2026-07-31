@@ -135,8 +135,7 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
             $this->resetReferences();
             $name = $this->readUTF();
             $required = $this->readByte() == 1; // find the must understand flag
-            //$length   = $this->readLong(); // grab the length of  the header element
-            $this->currentByte += 4; // grab the length of the header element
+            $this->readLong(); // declared header length; values are parsed by their markers
 
 
             $type = $this->readByte();  // grab the type of the element
@@ -156,8 +155,7 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
             $this->resetReferences();
             $target = $this->readUTF();
             $response = $this->readUTF(); //    the response that the client understands
-            //$length = $this->readLong(); // grab the length of    the Message element
-            $this->currentByte += 4;
+            $this->readLong(); // declared message length; values are parsed by their markers
             $type = $this->readByte(); // grab the type of the element
             $data = $this->readData($type); // turn the element into real data
             $message = new Amfphp_Core_Amf_Message($target, $response, $data);
@@ -172,8 +170,7 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
      * @return int The resulting integer from the next 2 bytes
      */
     protected function readInt() {
-        return ((ord($this->rawData[$this->currentByte++]) << 8) |
-                ord($this->rawData[$this->currentByte++])); // read the next 2 bytes, shift and add
+        return (($this->readByte() << 8) | $this->readByte());
     }
 
     /**
@@ -188,6 +185,7 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
         if ($length == 0) {
             return '';
         } else {
+            $this->requireBytes($length);
             $val = substr($this->rawData, $this->currentByte, $length); // grab the string
             $this->currentByte += $length; // move the seek head to the end of the string
 
@@ -201,7 +199,14 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
      * @return int The next byte converted into an integer
      */
     protected function readByte() {
+        $this->requireBytes(1);
         return ord($this->rawData[$this->currentByte++]); // return the next byte
+    }
+
+    private function requireBytes($length) {
+        if (!is_int($length) || $length < 0 || $this->currentByte + $length > strlen($this->rawData)) {
+            throw new Amfphp_Core_Exception('Truncated or malformed AMF packet');
+        }
     }
 
     /**
@@ -264,6 +269,7 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
      * @return float The floating point value of the next 8 bytes
      */
     protected function readDouble() {
+        $this->requireBytes(8);
         $bytes = substr($this->rawData, $this->currentByte, 8);
         $this->currentByte += 8;
         if (Amfphp_Core_Amf_Util::isSystemBigEndian()) {
@@ -301,7 +307,7 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
      */
     protected function readReference() {
         $reference = $this->readInt();
-        return $this->amf0storedObjects[$reference];
+        return $this->amf0storedObjects[$reference] ?? null;
     }
 
     /**
@@ -382,6 +388,7 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
      */
     protected function readLongUTF() {
         $length = $this->readLong(); // get the length of the string (1st 4 bytes)
+        $this->requireBytes($length);
         $val = substr($this->rawData, $this->currentByte, $length); // grab the string
         $this->currentByte += $length; // move the seek head to the end of the string
 
@@ -729,10 +736,10 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
      * @return int The resulting integer from the next 4 bytes
      */
     protected function readLong() {
-        return ((ord($this->rawData[$this->currentByte++]) << 24) |
-                (ord($this->rawData[$this->currentByte++]) << 16) |
-                (ord($this->rawData[$this->currentByte++]) << 8) |
-                ord($this->rawData[$this->currentByte++])); // read the next 4 bytes, shift and add
+        return (($this->readByte() << 24) |
+                ($this->readByte() << 16) |
+                ($this->readByte() << 8) |
+                $this->readByte());
     }
 
     /**
@@ -741,6 +748,7 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
      * @return mixed
      */
     protected function readBuffer($len) {
+        $this->requireBytes($len);
         $data = '';
         for ($i = 0; $i < $len; $i++) {
             $data .= $this->rawData
@@ -795,6 +803,8 @@ class Amfphp_Core_Amf_Deserializer implements Amfphp_Core_Common_IDeserializer {
                         $length = 8;
                         $format = "dval";
                         break;
+                    default:
+                        throw new Amfphp_Core_Exception('Unsupported AMF3 vector type.');
                 }
                 for ($i = 0; $i < $handle; $i++) {
                     //Grab the type for each element.

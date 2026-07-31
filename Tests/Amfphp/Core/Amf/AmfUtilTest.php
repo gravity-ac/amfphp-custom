@@ -12,7 +12,7 @@
 /**
  *  includes
  *  */
-require_once dirname(__FILE__) . '/../../../../Amfphp/ClassLoader.php';
+require_once dirname(__FILE__) . '/../../../../amfphp/ClassLoader.php';
 
 /**
  * Test class for Amfphp_Core_Amf_Util.
@@ -20,7 +20,7 @@ require_once dirname(__FILE__) . '/../../../../Amfphp/ClassLoader.php';
  * @package Tests_Amfphp_Core_Amf
  * @author Ariel Sommeria-klein
  */
-class Amfphp_Core_Amf_UtilTest extends PHPUnit_Framework_TestCase {
+class AmfUtilTest extends \PHPUnit\Framework\TestCase {
 
     /**
      * object
@@ -38,7 +38,7 @@ class Amfphp_Core_Amf_UtilTest extends PHPUnit_Framework_TestCase {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->object = new Amfphp_Core_Amf_Util;
     }
 
@@ -46,7 +46,7 @@ class Amfphp_Core_Amf_UtilTest extends PHPUnit_Framework_TestCase {
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown() {
+    protected function tearDown(): void {
         
     }
 
@@ -63,7 +63,7 @@ class Amfphp_Core_Amf_UtilTest extends PHPUnit_Framework_TestCase {
      * @param mixed $obj
      * @return mixed
      */
-    public function testApplyFunc($obj = null) {
+    public function applyFuncCallback($obj = null) {
         $this->counter++;
         return $obj;
     }
@@ -74,14 +74,14 @@ class Amfphp_Core_Amf_UtilTest extends PHPUnit_Framework_TestCase {
     public function testApplyFunctionToContainedObjects() {
         //non object
         $this->counter = 0;
-        Amfphp_Core_Amf_Util::applyFunctionToContainedObjects('bla', array($this, 'testApplyFunc'));
+        Amfphp_Core_Amf_Util::applyFunctionToContainedObjects('bla', array($this, 'applyFuncCallback'));
         $this->assertEquals(1, $this->counter);
 
         //simple
         $testObj1 = array();
         $testObj1[] = new stdClass();
         $this->counter = 0;
-        Amfphp_Core_Amf_Util::applyFunctionToContainedObjects($testObj1, array($this, 'testApplyFunc'));
+        Amfphp_Core_Amf_Util::applyFunctionToContainedObjects($testObj1, array($this, 'applyFuncCallback'));
         $this->assertEquals(2, $this->counter);
 
         //a bit more complicated
@@ -90,7 +90,7 @@ class Amfphp_Core_Amf_UtilTest extends PHPUnit_Framework_TestCase {
         $testObj2->data = $subObj;
         $testObj2->bla = 'bla';
         $this->counter = 0;
-        Amfphp_Core_Amf_Util::applyFunctionToContainedObjects($testObj2, array($this, 'testApplyFunc'));
+        Amfphp_Core_Amf_Util::applyFunctionToContainedObjects($testObj2, array($this, 'applyFuncCallback'));
         $this->assertEquals(10, $this->counter);
     }
 

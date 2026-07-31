@@ -1,0 +1,10 @@
+parameters:
+    level: 1
+    paths:
+        - amfphp
+    excludePaths:
+        analyse:
+            - amfphp/Plugins/AmfphpMonitor/log.txt.php
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - identifier: constructor.unusedParameter

@@ -12,8 +12,8 @@
 /**
  *  includes
  *  */
-require_once dirname(__FILE__) . '/../../../../Amfphp/Plugins/AmfphpAuthentication/AmfphpAuthentication.php';
-require_once dirname(__FILE__) . '/../../../../Amfphp/ClassLoader.php';
+require_once dirname(__FILE__) . '/../../../../amfphp/Plugins/AmfphpAuthentication/AmfphpAuthentication.php';
+require_once dirname(__FILE__) . '/../../../../amfphp/ClassLoader.php';
 require_once dirname(__FILE__) . '/../../../TestData/Services/TestAuthenticationService.php';
 
 /**
@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/../../../TestData/Services/TestAuthentication
  * @package Tests_Amfphp_Plugins_Authentication
  * @author Ariel Sommeria-klein
  */
-class AmfphpAuthenticationTest extends PHPUnit_Framework_TestCase {
+class AmfphpAuthenticationTest extends \PHPUnit\Framework\TestCase {
 
     /**
      * object
@@ -39,7 +39,7 @@ class AmfphpAuthenticationTest extends PHPUnit_Framework_TestCase {
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp() {
+    protected function setUp(): void {
         $this->object = new AmfphpAuthentication;
         $this->serviceObj = new TestAuthenticationService();
     }
@@ -48,7 +48,7 @@ class AmfphpAuthenticationTest extends PHPUnit_Framework_TestCase {
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown() {
+    protected function tearDown(): void {
         session_unset();
     }
 
@@ -76,6 +76,7 @@ class AmfphpAuthenticationTest extends PHPUnit_Framework_TestCase {
     public function testLoginAndAccess() {
         $this->serviceObj->login('admin', 'adminPassword');
         $this->object->filterServiceObject($this->serviceObj, 'AnyService', 'adminMethod');
+        $this->addToAssertionCount(1);
     }
 
     /**
@@ -83,6 +84,7 @@ class AmfphpAuthenticationTest extends PHPUnit_Framework_TestCase {
      */
     public function testNormalAccessToUnprotectedMethods() {
         $this->object->filterServiceObject($this->serviceObj, 'AnyService', 'logout');
+        $this->addToAssertionCount(1);
     }
 
     /**
@@ -93,6 +95,7 @@ class AmfphpAuthenticationTest extends PHPUnit_Framework_TestCase {
         $this->serviceObj->login('admin', 'adminPassword');
         $this->object->filterServiceObject($this->serviceObj, 'AnyService', 'adminMethod');
         $this->serviceObj->logout();
+        $this->expectException(Amfphp_Core_Exception::class);
         $this->object->filterServiceObject($this->serviceObj, 'AnyService', 'adminMethod');
     }
 
@@ -101,6 +104,7 @@ class AmfphpAuthenticationTest extends PHPUnit_Framework_TestCase {
      * @expectedException Amfphp_Core_Exception
      */
     public function testAccessWithoutAuthentication() {
+        $this->expectException(Amfphp_Core_Exception::class);
         $this->object->filterServiceObject($this->serviceObj, 'AnyService', 'adminMethod');
     }
 
@@ -110,6 +114,7 @@ class AmfphpAuthenticationTest extends PHPUnit_Framework_TestCase {
      */
     public function testBadRole() {
         $this->serviceObj->login('user', 'userPassword');
+        $this->expectException(Amfphp_Core_Exception::class);
         $this->object->filterServiceObject($this->serviceObj, 'AnyService', 'adminMethod');
     }
 
@@ -136,6 +141,7 @@ class AmfphpAuthenticationTest extends PHPUnit_Framework_TestCase {
      * @expectedException Amfphp_Core_Exception
      */
     public function testWithFiltersBlockAccess() {
+        $this->expectException(Amfphp_Core_Exception::class);
         Amfphp_Core_FilterManager::getInstance()->callFilters(Amfphp_Core_Common_ServiceRouter::FILTER_SERVICE_OBJECT, $this->serviceObj, 'TestService', 'adminMethod');
     }
 
@@ -153,6 +159,7 @@ class AmfphpAuthenticationTest extends PHPUnit_Framework_TestCase {
         $ret = $filterManager->callFilters(Amfphp_Core_Amf_Handler::FILTER_AMF_REQUEST_HEADER_HANDLER, null, $credentialsHeader);
         $ret->handleRequestHeader($credentialsHeader);
         $ret->filterServiceObject($this->serviceObj, 'AnyService', 'adminMethod');
+        $this->addToAssertionCount(1);
     }
 
 }

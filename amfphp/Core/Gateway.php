@@ -150,7 +150,7 @@ class Amfphp_Core_Gateway {
      * @param String $contentType
      * @param Amfphp_Core_Config $config optional. The default config object will be used if null
      */
-    public function  __construct(array $getData, array $postData, $rawInputData, $contentType, Amfphp_Core_Config $config = null) {
+    public function  __construct(array $getData, array $postData, $rawInputData, $contentType, ?Amfphp_Core_Config $config = null) {
         $this->getData = $getData;
         $this->postData = $postData;
         $this->rawInputData = $rawInputData;
@@ -188,8 +188,8 @@ class Amfphp_Core_Gateway {
     public function service(){
         $filterManager = Amfphp_Core_FilterManager::getInstance();
         $deserializedResponse = null;
+        $defaultHandler = new Amfphp_Core_Amf_Handler($this->config->sharedConfig);
         try{
-            $defaultHandler = new Amfphp_Core_Amf_Handler($this->config->sharedConfig);
             Amfphp_Core_PluginManager::getInstance()->loadPlugins($this->config->pluginsFolders, $this->config->pluginsConfig, $this->config->sharedConfig, $this->config->disabledPlugins);
             
             //filter service folder paths

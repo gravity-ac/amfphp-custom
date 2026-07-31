@@ -76,7 +76,7 @@ class AmfphpVoConverter implements Amfphp_Core_Common_IVoConverter {
      * constructor.
      * @param array $config optional key/value pairs in an associative array. Used to override default configuration values.
      */
-    public function __construct(array $config = null) {
+    public function __construct(?array $config = null) {
         //default
         $this->voFolders = array(AMFPHP_ROOTPATH . '/Services/Vo/');
         if ($config) {
